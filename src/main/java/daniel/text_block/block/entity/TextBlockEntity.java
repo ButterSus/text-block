@@ -27,7 +27,7 @@ public class TextBlockEntity extends BlockEntity {
     private Text text = Text.translatable("block.text_block.text_block");
     private final Vector3f rotation = new Vector3f(0, 0, 0);
     private final Vector3f offset = new Vector3f(0, 0, 0);
-    private final Vector3f scale = new Vector3f(0.1f, 0.1f,0.1f);
+    private final Vector3f scale = new Vector3f(0.1f, 0.1f, 0.1f);
 
     public TextBlockEntity(BlockPos pos, BlockState state) {
         super(TextBlock.TEXT_BLOCK_ENTITY, pos, state);
@@ -82,7 +82,6 @@ public class TextBlockEntity extends BlockEntity {
     }
 
 
-
     @Nullable
     @Override
     public Packet<ClientPlayPacketListener> toUpdatePacket() {
@@ -99,8 +98,7 @@ public class TextBlockEntity extends BlockEntity {
         if (this.world instanceof ServerWorld) {
             try {
                 return Texts.parse(this.getCommandSource(), text, null, 0);
-            }
-            catch (CommandSyntaxException commandSyntaxException) {
+            } catch (CommandSyntaxException ignored) {
             }
         }
         return text;
@@ -112,15 +110,15 @@ public class TextBlockEntity extends BlockEntity {
             if (text != null) {
                 return text;
             }
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             // empty catch block
         }
         return ScreenTexts.EMPTY;
     }
 
     public ServerCommandSource getCommandSource() {
-        return new ServerCommandSource(CommandOutput.DUMMY, Vec3d.ofCenter(this.pos), Vec2f.ZERO, (ServerWorld)this.world, 2, "Text Block", text, this.world.getServer(), null);
+        assert this.world != null;
+        return new ServerCommandSource(CommandOutput.DUMMY, Vec3d.ofCenter(this.pos), Vec2f.ZERO, (ServerWorld) this.world, 2, "Text Block", text, this.world.getServer(), null);
     }
 
     @Override

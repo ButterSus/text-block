@@ -13,6 +13,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class TextBlockRenderer implements BlockEntityRenderer<TextBlockEntity> {
+    @SuppressWarnings("unused")
     public TextBlockRenderer(BlockEntityRendererFactory.Context ctx) {
         // Register signature
     }

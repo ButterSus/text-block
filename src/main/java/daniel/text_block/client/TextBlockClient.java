@@ -23,9 +23,7 @@ public class TextBlockClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         BlockEntityRendererRegistry.register(TextBlock.TEXT_BLOCK_ENTITY, TextBlockRenderer::new);
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(entries -> {
-            entries.add(TEXT_BLOCK_ITEM);
-        });
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(entries -> entries.add(TEXT_BLOCK_ITEM));
 
         ClientPlayNetworking.registerGlobalReceiver(TextBlock.OPEN_TEXT_BLOCK_SCREEN_PACKET_ID, (client, handler, buf, responseSender) -> {
             BlockPos pos = buf.readBlockPos();
@@ -37,6 +35,7 @@ public class TextBlockClient implements ClientModInitializer {
                     textBlock = new SignBlockEntity(pos, textBlockState);
                     textBlock.setWorld(client.world);
                 }
+                assert textBlock instanceof TextBlockEntity;
                 client.setScreen(new TextBlockScreen((TextBlockEntity) textBlock));
             });
         });

@@ -19,7 +19,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import org.apache.commons.lang3.math.NumberUtils;
-import net.minecraft.client.gui.screen.narration.Narration;
 
 import java.text.DecimalFormat;
 
@@ -70,13 +69,13 @@ public class TextBlockScreen extends Screen {
         Vec3d rotation = new Vec3d(textBlock.getRotation());
         Vec3d scale = new Vec3d(textBlock.getScale());
         for (int i = 0; i < 3; i++) {
-            offsetWidgets[i] = new NumberTextFieldWidget(this.textRenderer, this.x + i * 48 + 4, this.y + 73, 40, 20, Text.translatable(""));
+            offsetWidgets[i] = new NumberTextFieldWidget(this.textRenderer, this.x + i * 48 + 4, this.y + 73, 40, 20, Text.empty());
             offsetWidgets[i].setText(decimalNumberFormat.format(offset.getComponentAlongAxis(Direction.Axis.VALUES[i])));
 
-            rotationWidgets[i] = new NumberTextFieldWidget(this.textRenderer, this.x + i * 48 + 4, this.y + 107, 40, 20, Text.translatable(""));
+            rotationWidgets[i] = new NumberTextFieldWidget(this.textRenderer, this.x + i * 48 + 4, this.y + 107, 40, 20, Text.empty());
             rotationWidgets[i].setText(decimalNumberFormat.format(rotation.getComponentAlongAxis(Direction.Axis.VALUES[i])));
 
-            scaleWidgets[i] = new NumberTextFieldWidget(this.textRenderer, this.x + i * 48 + 4, this.y + 141, 40, 20, Text.translatable(""));
+            scaleWidgets[i] = new NumberTextFieldWidget(this.textRenderer, this.x + i * 48 + 4, this.y + 141, 40, 20, Text.empty());
             scaleWidgets[i].setText(decimalNumberFormat.format(scale.getComponentAlongAxis(Direction.Axis.VALUES[i])));
 
             this.addDrawableChild(offsetWidgets[i]);
@@ -134,7 +133,7 @@ public class TextBlockScreen extends Screen {
         RenderSystem.setShaderTexture(0, TEXTURE);
         int i = this.x;
         int j = (this.height - this.backgroundHeight) / 2;
-        this.drawTexture(matrices, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight);
+        drawTexture(matrices, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight);
 
         this.textRenderer.draw(matrices, Text.translatable("gui.text_block.text"), this.x + 3, this.y + 5, 0x404040);
 
