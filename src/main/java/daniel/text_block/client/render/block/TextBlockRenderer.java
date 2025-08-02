@@ -2,13 +2,15 @@ package daniel.text_block.client.render.block;
 
 import daniel.text_block.block.entity.TextBlockEntity;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.text.OrderedText;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -25,16 +27,15 @@ public class TextBlockRenderer implements BlockEntityRenderer<TextBlockEntity> {
 
         matrices.push();
 
-        matrices.translate(0.5f, 1, 0.5f);
+        matrices.translate(0.5f, 0.5f, 0.5f);
         Vector3f scale = entity.getScale();
         Vector3f offset = entity.getOffset();
+
         if (entity.isBillboard()) {
             matrices.multiply(dispatcher.getRotation());
             matrices.scale(-scale.x, -scale.y, -scale.z);
         } else {
-            matrices.translate(offset.x, offset.y, offset.z);
-
-            // Try different rotation order - might be ZYX instead of XYZ
+            // Apply rotation first
             Vector3f rotation = entity.getRotation();
             matrices.multiply(
                     new Quaternionf()
@@ -45,6 +46,8 @@ public class TextBlockRenderer implements BlockEntityRenderer<TextBlockEntity> {
                             )
             );
 
+            // Apply offset in local space (after rotation)
+            matrices.translate(offset.x, offset.y, offset.z);
             matrices.scale(scale.x, -scale.y, scale.z);
         }
 
@@ -53,7 +56,7 @@ public class TextBlockRenderer implements BlockEntityRenderer<TextBlockEntity> {
             matrices.scale(distance, distance, distance);
         }
 
-        DrawableHelper.drawCenteredTextWithShadow(matrices, MinecraftClient.getInstance().textRenderer, entity.getText(), 0, 0, 0xffffff);
+        drawFullyCenteredTextWithShadow(matrices, MinecraftClient.getInstance().textRenderer, entity.getText(), 0, 0, 0xffffff);
         matrices.pop();
     }
 
@@ -76,5 +79,18 @@ public class TextBlockRenderer implements BlockEntityRenderer<TextBlockEntity> {
 
         distance *= 0.2f;
         return distance;
+    }
+
+    // Custom method to draw text centered both horizontally and vertically
+    @SuppressWarnings("SameParameterValue")
+    private void drawFullyCenteredTextWithShadow(MatrixStack matrices, TextRenderer textRenderer, Text text, int centerX, int centerY, int color) {
+        OrderedText orderedText = text.asOrderedText();
+        int textWidth = textRenderer.getWidth(orderedText);
+        int textHeight = textRenderer.fontHeight;
+
+        float x = centerX - textWidth / 2.0f;
+        float y = centerY - textHeight / 2.0f;
+
+        textRenderer.drawWithShadow(matrices, orderedText, x, y, color);
     }
 }
