@@ -45,6 +45,10 @@ tasks.withType(JavaCompile).configureEach {
     }
 }
 
+loom {
+    accessWidenerPath = file("src/main/resources/text_block.accesswidener")
+}
+
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     if (JavaVersion.current() < javaVersion) {
