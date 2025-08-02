@@ -39,5 +39,7 @@ public class TextBlockClient implements ClientModInitializer {
                 client.setScreen(new TextBlockScreen((TextBlockEntity) textBlock));
             });
         });
+
+        new MouseScrollHandler().initialize();
     }
 }
