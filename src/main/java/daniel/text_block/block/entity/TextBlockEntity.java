@@ -122,7 +122,7 @@ public class TextBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt) {
+    public void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         nbt.putString("Text", Text.Serializer.toJson(this.text));
         nbt.putBoolean("Billboard", billboard);
