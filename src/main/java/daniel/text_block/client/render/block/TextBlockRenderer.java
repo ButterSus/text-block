@@ -8,6 +8,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -48,13 +49,32 @@ public class TextBlockRenderer implements BlockEntityRenderer<TextBlockEntity> {
         }
 
         if (entity.isDistanceScaled()) {
-            assert MinecraftClient.getInstance().cameraEntity != null;
-            float distance = MathHelper.sqrt((float) MinecraftClient.getInstance().cameraEntity.squaredDistanceTo(entity.getPos().getX(), entity.getPos().getY(), entity.getPos().getZ()));
-            distance *= 0.2f;
+            float distance = getDistance(entity, tickDelta);
             matrices.scale(distance, distance, distance);
         }
 
         DrawableHelper.drawCenteredTextWithShadow(matrices, MinecraftClient.getInstance().textRenderer, entity.getText(), 0, 0, 0xffffff);
         matrices.pop();
+    }
+
+    private static float getDistance(TextBlockEntity entity, float tickDelta) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        Entity cameraEntity = client.cameraEntity;
+
+        assert cameraEntity != null;
+
+        // Interpolate camera position smoothly between previous and current tick positions
+        double interpCamX = MathHelper.lerp(tickDelta, cameraEntity.prevX, cameraEntity.getX());
+        double interpCamY = MathHelper.lerp(tickDelta, cameraEntity.prevY, cameraEntity.getY());
+        double interpCamZ = MathHelper.lerp(tickDelta, cameraEntity.prevZ, cameraEntity.getZ());
+
+        // Compute squared distance from interpolated camera position to fixed block entity position
+        double dx = interpCamX - entity.getPos().getX();
+        double dy = interpCamY - entity.getPos().getY();
+        double dz = interpCamZ - entity.getPos().getZ();
+        float distance = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+        distance *= 0.2f;
+        return distance;
     }
 }
