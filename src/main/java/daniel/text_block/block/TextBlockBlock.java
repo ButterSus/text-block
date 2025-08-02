@@ -53,10 +53,9 @@ public class TextBlockBlock extends BlockWithEntity {
                 float yaw = (float) Math.toDegrees(Math.atan2(-direction.x, direction.z));
                 float pitch = (float) Math.toDegrees(Math.asin(-direction.y));
 
-                float yawAligned = Math.round(yaw / 45.0f) * 45.0f;
-                System.out.printf("Pitch: %f%n", pitch);
+                float yawAligned = Math.round((Math.abs(pitch) > 70f ? player.getYaw() + 180.0f : yaw) / 45.0f) * 45.0f;
                 float pitchAligned = pitch > 0 ? Math.round(pitch / 45.0f) * 45.0f :
-                        pitch > -45.0f ? 0.0f : pitch < -75.0f ? -90.0f : -45.0f;
+                        pitch > -45.0f ? 0.0f : pitch < -70f ? -90.0f : -45.0f;
 
                 textBlockEntity.setRotation(pitchAligned, -yawAligned, 0.0f);
             }
