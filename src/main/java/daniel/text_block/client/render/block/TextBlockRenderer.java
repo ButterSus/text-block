@@ -34,17 +34,17 @@ public class TextBlockRenderer implements BlockEntityRenderer<TextBlockEntity> {
         } else {
             matrices.translate(offset.x, offset.y, offset.z);
 
-            float rotX = entity.getRotation().x;
-            float rotY = entity.getRotation().y;
-            float rotZ = entity.getRotation().z;
+            // Try different rotation order - might be ZYX instead of XYZ
+            Vector3f rotation = entity.getRotation();
             matrices.multiply(
                     new Quaternionf()
-                            .rotationXYZ(
-                                    (float) Math.toRadians(rotX),
-                                    (float) Math.toRadians(rotY),
-                                    (float) Math.toRadians(rotZ)
+                            .rotationZYX(
+                                    (float) Math.toRadians(rotation.z),
+                                    (float) Math.toRadians(rotation.y),
+                                    (float) Math.toRadians(rotation.x)
                             )
             );
+
             matrices.scale(scale.x, -scale.y, scale.z);
         }
 
