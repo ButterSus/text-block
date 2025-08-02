@@ -43,7 +43,6 @@ public class TextBlockScreen extends Screen {
 
     private final DecimalFormat decimalNumberFormat = new DecimalFormat("#.###");
 
-
     public TextBlockScreen(TextBlockEntity textBlock) {
         super(Text.empty());
         this.textBlock = textBlock;
@@ -93,6 +92,22 @@ public class TextBlockScreen extends Screen {
         );
     }
 
+    // Helper method to safely parse float values with fallback
+    private float safeParseFloat(String text, float fallback) {
+        if (text == null || text.trim().isEmpty()) {
+            return fallback;
+        }
+
+        String trimmed = text.trim();
+
+        // Check if it's a valid complete number (not just intermediate state)
+        if (!trimmed.matches("^[+-]?\\d+(?:\\.\\d+)?$")) {
+            return fallback;
+        }
+
+        return NumberUtils.createFloat(trimmed);
+    }
+
     @Override
     public void removed() {
 //        this.client.keyboard.setRepeatEvents(false);
@@ -110,17 +125,22 @@ public class TextBlockScreen extends Screen {
         data.writeBoolean(this.billboardCheckbox.isChecked());
         data.writeBoolean(this.distanceScaledCheckbox.isChecked());
 
-        data.writeFloat(NumberUtils.createFloat(offsetWidgets[0].getText()));
-        data.writeFloat(NumberUtils.createFloat(offsetWidgets[1].getText()));
-        data.writeFloat(NumberUtils.createFloat(offsetWidgets[2].getText()));
+        // Safe parsing with fallbacks to current values
+        Vec3d currentOffset = new Vec3d(textBlock.getOffset());
+        Vec3d currentRotation = new Vec3d(textBlock.getRotation());
+        Vec3d currentScale = new Vec3d(textBlock.getScale());
 
-        data.writeFloat(NumberUtils.createFloat(rotationWidgets[0].getText()));
-        data.writeFloat(NumberUtils.createFloat(rotationWidgets[1].getText()));
-        data.writeFloat(NumberUtils.createFloat(rotationWidgets[2].getText()));
+        data.writeFloat(safeParseFloat(offsetWidgets[0].getText(), (float) currentOffset.x));
+        data.writeFloat(safeParseFloat(offsetWidgets[1].getText(), (float) currentOffset.y));
+        data.writeFloat(safeParseFloat(offsetWidgets[2].getText(), (float) currentOffset.z));
 
-        data.writeFloat(NumberUtils.createFloat(scaleWidgets[0].getText()));
-        data.writeFloat(NumberUtils.createFloat(scaleWidgets[1].getText()));
-        data.writeFloat(NumberUtils.createFloat(scaleWidgets[2].getText()));
+        data.writeFloat(safeParseFloat(rotationWidgets[0].getText(), (float) currentRotation.x));
+        data.writeFloat(safeParseFloat(rotationWidgets[1].getText(), (float) currentRotation.y));
+        data.writeFloat(safeParseFloat(rotationWidgets[2].getText(), (float) currentRotation.z));
+
+        data.writeFloat(safeParseFloat(scaleWidgets[0].getText(), (float) currentScale.x));
+        data.writeFloat(safeParseFloat(scaleWidgets[1].getText(), (float) currentScale.y));
+        data.writeFloat(safeParseFloat(scaleWidgets[2].getText(), (float) currentScale.z));
 
         ClientPlayNetworking.send(TextBlock.TEXT_BLOCK_UPDATE_PACKET, data);
         super.removed();
