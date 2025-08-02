@@ -2,18 +2,15 @@ package daniel.text_block.block.entity;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import daniel.text_block.TextBlock;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.Packet;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.server.command.CommandOutput;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -21,18 +18,16 @@ import net.minecraft.text.Texts;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3f;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
+import org.joml.Vector3f;
 
 public class TextBlockEntity extends BlockEntity {
     private boolean billboard;
     private boolean distanceScaled;
     private Text text = Text.translatable("block.text_block.text_block");
-    private final Vec3f rotation = new Vec3f(0, 0, 0);
-    private final Vec3f offset = new Vec3f(0, 0, 0);
-    private final Vec3f scale = new Vec3f(0.1f, 0.1f,0.1f);
+    private final Vector3f rotation = new Vector3f(0, 0, 0);
+    private final Vector3f offset = new Vector3f(0, 0, 0);
+    private final Vector3f scale = new Vector3f(0.1f, 0.1f,0.1f);
 
     public TextBlockEntity(BlockPos pos, BlockState state) {
         super(TextBlock.TEXT_BLOCK_ENTITY, pos, state);
@@ -50,11 +45,11 @@ public class TextBlockEntity extends BlockEntity {
         this.offset.set(x, y, z);
     }
 
-    public Vec3f getOffset() {
+    public Vector3f getOffset() {
         return this.offset;
     }
 
-    public Vec3f getScale() {
+    public Vector3f getScale() {
         return this.scale;
     }
 
@@ -62,7 +57,7 @@ public class TextBlockEntity extends BlockEntity {
         this.scale.set(x, y, z);
     }
 
-    public Vec3f getRotation() {
+    public Vector3f getRotation() {
         return this.rotation;
     }
 
@@ -134,15 +129,15 @@ public class TextBlockEntity extends BlockEntity {
         nbt.putString("Text", Text.Serializer.toJson(this.text));
         nbt.putBoolean("Billboard", billboard);
         nbt.putBoolean("DistanceScaled", distanceScaled);
-        nbt.putFloat("ScaleX", scale.getX());
-        nbt.putFloat("ScaleY", scale.getY());
-        nbt.putFloat("ScaleZ", scale.getZ());
-        nbt.putFloat("OffsetX", offset.getX());
-        nbt.putFloat("OffsetY", offset.getY());
-        nbt.putFloat("OffsetZ", offset.getZ());
-        nbt.putFloat("RotationX", rotation.getX());
-        nbt.putFloat("RotationY", rotation.getY());
-        nbt.putFloat("RotationZ", rotation.getZ());
+        nbt.putFloat("ScaleX", scale.x);
+        nbt.putFloat("ScaleY", scale.y);
+        nbt.putFloat("ScaleZ", scale.z);
+        nbt.putFloat("OffsetX", offset.x);
+        nbt.putFloat("OffsetY", offset.y);
+        nbt.putFloat("OffsetZ", offset.z);
+        nbt.putFloat("RotationX", rotation.x);
+        nbt.putFloat("RotationY", rotation.y);
+        nbt.putFloat("RotationZ", rotation.z);
     }
 
     @Override

@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import daniel.text_block.TextBlock;
 import daniel.text_block.block.entity.TextBlockEntity;
 import daniel.text_block.client.gui.widget.NumberTextFieldWidget;
-import daniel.text_block.client.gui.widget.VectorSliderWidget;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.gui.screen.Screen;
@@ -19,12 +18,10 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3f;
 import org.apache.commons.lang3.math.NumberUtils;
+import net.minecraft.client.gui.screen.narration.Narration;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Objects;
 
 public class TextBlockScreen extends Screen {
 
@@ -57,7 +54,7 @@ public class TextBlockScreen extends Screen {
     protected void init() {
         super.init();
 
-        this.client.keyboard.setRepeatEvents(true);
+//        this.client.keyboard.setRepeatEvents(true);
 
         this.x = (this.width - this.backgroundWidth) / 2;
         this.y = (this.height - this.backgroundHeight) / 2;
@@ -87,23 +84,26 @@ public class TextBlockScreen extends Screen {
             this.addDrawableChild(scaleWidgets[i]);
         }
 
-        this.addDrawableChild(new ButtonWidget(this.x, this.y + 167, 176, 20, ScreenTexts.DONE,button -> {
-            textBlock.markDirty();
-            this.close();
-        }));
+        this.addDrawableChild(
+                new ButtonWidget.Builder(ScreenTexts.DONE, button -> {
+                    textBlock.markDirty();
+                    this.close();
+                }).position(this.x, this.y + 167)
+                        .size(176, 20)
+                        .build()
+        );
     }
 
     @Override
     public void removed() {
-        this.client.keyboard.setRepeatEvents(false);
+//        this.client.keyboard.setRepeatEvents(false);
         PacketByteBuf data = PacketByteBufs.create();
         data.writeBlockPos(this.textBlock.getPos());
 
         Text text;
         try {
             text = Text.Serializer.fromJson(this.textWidget.getText());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             text = Text.literal(this.textWidget.getText());
         }
         data.writeText(text);
@@ -128,13 +128,8 @@ public class TextBlockScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(MatrixStack matrices, int vOffset) {
-        super.renderBackground(matrices, vOffset);
-    }
-
-    @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, TEXTURE);
         int i = this.x;

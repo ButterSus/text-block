@@ -9,16 +9,11 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-
-import java.lang.reflect.Array;
-import java.util.Arrays;
 
 public class VectorSliderWidget extends ClickableWidget {
 
     private final int dimensions;
-    private final float[] values;
+    private final int[] values;
 
     private int selectedIndex;
     private boolean isDragging = false;
@@ -34,12 +29,7 @@ public class VectorSliderWidget extends ClickableWidget {
     public VectorSliderWidget(int x, int y, int width, int height, Text message, int dimensions) {
         super(x, y, width, height, message);
         this.dimensions = dimensions;
-        this.values = new float[dimensions];
-    }
-
-    @Override
-    protected int getYImage(boolean hovered) {
-        return 0;
+        this.values = new int[dimensions];
     }
 
     @Override
@@ -47,7 +37,7 @@ public class VectorSliderWidget extends ClickableWidget {
         if (this.isHovered() && !isDragging) {
             for (int i = 0; i < this.dimensions; i++) {
                 int width = this.width / (this.dimensions * 2) - 2;
-                int x = this.x + width * i * 2 + i * 5;
+                int x = this.getX() + width * i * 2 + i * 5;
 
                 if (mouseX > x && mouseX < x + width * 2) {
                     selectedIndex = i;
@@ -63,27 +53,25 @@ public class VectorSliderWidget extends ClickableWidget {
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         TextRenderer textRenderer = minecraftClient.textRenderer;
 
-        DrawableHelper.drawTextWithShadow(matrices, textRenderer, this.getMessage(), this.x, this.y - 9, 0xffffff);
+        DrawableHelper.drawTextWithShadow(matrices, textRenderer, this.getMessage(), this.getX(), this.getY() - 9, 0xffffff);
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
 
         int width = this.width / (this.dimensions * 2) - 2;
-        int y = this.y;
+        int y = this.getY();
         for (int i = 0; i < this.dimensions; i++) {
-            int x = this.x + width * i * 2 + i * 5;
+            int x = this.getX() + width * i * 2 + i * 5;
             int hoverOffset = (selectedIndex == i && (isHovered() || isDragging)) ? 40 : 0;
 
-
-
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShader(GameRenderer::getPositionTexProgram);
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, this.alpha);
             RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
-            this.drawTexture(matrices, x, y, 0, 46 + hoverOffset, width, this.height);
-            this.drawTexture(matrices, x + width, y, this.width - width, 46 + hoverOffset, width, this.height);
+            drawTexture(matrices, x, y, 0, 46 + hoverOffset, width, this.height);
+            drawTexture(matrices, x + width, y, this.width - width, 46 + hoverOffset, width, this.height);
             //textRenderer.draw(matrices, compNames[i], x, this.y + (this.height - 8) / 2, 0xffffff);
-            DrawableHelper.drawCenteredText(matrices, textRenderer, COMPONENT_NAMES[i] + values[i], x + width, y + (this.height - 8) / 2, COMPONENT_COLORS[i]);
+            DrawableHelper.drawCenteredTextWithShadow(matrices, textRenderer, COMPONENT_NAMES[i] + values[i], x + width, y + (this.height - 8) / 2, COMPONENT_COLORS[i]);
         }
     }
 
@@ -111,22 +99,16 @@ public class VectorSliderWidget extends ClickableWidget {
         return super.isMouseOver(mouseX, mouseY);
     }
 
-    public float getX() {
+    public int getX() {
         return this.values[0];
     }
 
-    public float getY() {
+    public int getY() {
         return this.values[1];
     }
 
-    public float getZ() {
+    public int getZ() {
         return this.values[2];
-    }
-
-    public void setData(float x, float y, float z) {
-        this.values[0] = x;
-        this.values[1] = y;
-        this.values[2] = z;
     }
 
     @Override
@@ -141,11 +123,5 @@ public class VectorSliderWidget extends ClickableWidget {
     }
 
     @Override
-    protected void renderBackground(MatrixStack matrices, MinecraftClient client, int mouseX, int mouseY) {
-    }
-
-    @Override
-    public void appendNarrations(NarrationMessageBuilder builder) {
-
-    }
+    protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
 }
