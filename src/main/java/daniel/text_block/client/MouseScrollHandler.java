@@ -122,9 +122,9 @@ public class MouseScrollHandler {
 
         // Write modified scale values (current + change, with limits)
         Vector3f currentScale = textBlockEntity.getScale();
-        float newScaleX = Math.max(0.1f, Math.min(5.0f, currentScale.x + scaleChange));
-        float newScaleY = Math.max(0.1f, Math.min(5.0f, currentScale.y + scaleChange));
-        float newScaleZ = Math.max(0.1f, Math.min(5.0f, currentScale.z + scaleChange));
+        float newScaleX = Math.max(0.01f, Math.min(5.0f, currentScale.x + scaleChange * 0.1f));
+        float newScaleY = Math.max(0.01f, Math.min(5.0f, currentScale.y + scaleChange * 0.1f));
+        float newScaleZ = Math.max(0.01f, Math.min(5.0f, currentScale.z + scaleChange * 0.1f));
 
         data.writeFloat(newScaleX);
         data.writeFloat(newScaleY);
