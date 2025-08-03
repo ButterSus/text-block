@@ -10,6 +10,7 @@ I'd like to keep maintaining this mod if anyone is interested.
 - Added `ctrl+<Scroll>` mapping to easily change font size.
 - Align placed blocks automatically.
 - Moved text block item to redstone category.
+- Hold `ctrl` while placing block to "stick" it (similar to item frames).
 
 ## Where is item?
 
