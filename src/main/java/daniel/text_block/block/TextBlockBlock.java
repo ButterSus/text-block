@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -21,6 +22,7 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 
 @SuppressWarnings("deprecation")
 public class TextBlockBlock extends BlockWithEntity {
@@ -58,6 +60,22 @@ public class TextBlockBlock extends BlockWithEntity {
                         pitch > -45.0f ? 0.0f : pitch < -70f ? -90.0f : -45.0f;
 
                 textBlockEntity.setRotation(pitchAligned, -yawAligned, 0.0f);
+
+                MinecraftClient client = MinecraftClient.getInstance();
+                boolean ctrlPressed = GLFW.glfwGetKey(client.getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS ||
+                        GLFW.glfwGetKey(client.getWindow().getHandle(), GLFW.GLFW_KEY_RIGHT_CONTROL) == GLFW.GLFW_PRESS;
+
+                if (ctrlPressed) {
+                    // Count how many axes are involved in the rotation (non-90 degree multiples)
+                    int axesUsed = 1;
+                    if (yawAligned % 90.0f != 0.0f) axesUsed++;
+                    if (pitchAligned % 90.0f != 0.0f) axesUsed++;
+
+                    // Calculate the offset factor using Pythagorean theorem
+                    float offset = (float) (-0.45f * Math.sqrt(axesUsed));
+
+                    textBlockEntity.setOffset(0.0f, 0.0f, offset);
+                }
             }
         }
     }
