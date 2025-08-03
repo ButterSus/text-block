@@ -1,5 +1,9 @@
 Credits to original author of the mod [GitWither](https://github.com/GitWither).
 
+If you need a port to new versions, feel free to ask it in separate issue.
+
+I'd like to keep maintaining this mod if anyone is interested.
+
 **Changes in this fork:**
 - Fixed few bugs related to rendering.
 - Ported mod to 1.19.4.
